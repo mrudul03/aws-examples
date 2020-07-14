@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Metadata: 
+  License: Apache-2.0
+Description: 'AWS CloudFormation Sample Template RDS_with_DBParameterGroup: Sample
+  template showing how to create an Amazon RDS Database Instance with a DBParameterGroup.**WARNING**
+  This template creates an Amazon Relational Database Service database instance. You
+  will be billed for the AWS resources used if you create a stack from this template.'
+
+Parameters:
+  EnvironmentName: 
+    Type: String
+    Default: Demo1
+    Description: Name of the environment.
+  DBName:
+    Default: ecsdemo
+    Description: The database name
+    Type: String
+    MinLength: '1'
+    MaxLength: '64'
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
+  DBUser:
+    NoEcho: 'true'
+    Description: The database admin account username
+    Type: String
+    MinLength: '1'
+    MaxLength: '16'
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
+  DBPassword:
+    NoEcho: 'true'
+    Description: The database admin account password
+    Type: String
+    MinLength: '8'
+    MaxLength: '41'
+    AllowedPattern: '[a-zA-Z0-9]*'
+    ConstraintDescription: must contain only alphanumeric characters.
+
+Resources:
+
+  
+  
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Open database for access
+      SecurityGroupIngress: 
+        - IpProtocol: tcp
+          FromPort: '3306'
+          ToPort: '3306'
+          SourceSecurityGroupId:
+            Fn::ImportValue:
+              !Join [':', [!Ref 'EnvironmentName', 'FargateContainerSecurityGroup']]
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+
+      VpcId: 
+        Fn::ImportValue: 
+          !Join [':', [!Ref 'EnvironmentName', 'VPCId']]
+      Tags:
+        - Key: Name
+          Value: 
+            !Join [ '-', [!Ref EnvironmentName, DBSecurityGroup] ]
+      
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet Group for ECS DB
+      DBSubnetGroupName: ecsdemosubnetgrp
+      SubnetIds:
+        - Fn::ImportValue: 
+            !Join [':', [!Ref 'EnvironmentName', 'PrivateSubnetOne']]
+        - Fn::ImportValue: 
+            !Join [':', [!Ref 'EnvironmentName', 'PrivateSubnetTwo']]
+      Tags:
+        - Key: Name
+          Value: !Join [ '-', [!Ref EnvironmentName, DBSubnetGroup] ]
+
+  
+  DB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: !Ref 'DBName'
+      AllocatedStorage: '20'
+      DBInstanceClass: db.t2.micro
+      Engine: MySQL
+      EngineVersion: 8.0.11
+      Port: '3306'
+      MultiAZ: false
+      PubliclyAccessible: true
+      StorageType: gp2
+      MasterUsername: !Ref 'DBUser'
+      MasterUserPassword: !Ref 'DBPassword'
+      DBParameterGroupName: !Ref 'RDSParamGroup'
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups: 
+        - !Ref DBSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Join [ '-', [!Ref EnvironmentName, DB] ]
+
+  
+  RDSParamGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Properties:
+      Family: MySQL8.0
+      Description: CloudFormation Sample Database Parameter Group
+      Tags:
+        - Key: Name
+          Value: !Join [ '-', [!Ref EnvironmentName, RDSParamGroup] ]
+
+
+
+
+Outputs:
+  JDBCConnectionString:
+    Description: JDBC connection string for the database
+    Value: !Join ['', ['jdbc:mysql://', !GetAtt [DB, Endpoint.Address], ':', !GetAtt [
+          DB, Endpoint.Port], /, !Ref 'DBName']]

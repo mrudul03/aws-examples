@@ -1,0 +1,74 @@
+
+AWSTemplateFormatVersion: '2010-09-09'
+Metadata: 
+  License: Apache-2.0
+Description: 'AWS CloudFormation Sample Template RDS_with_DBParameterGroup: Sample
+  template showing how to create an Amazon RDS Database Instance with a DBParameterGroup.**WARNING**
+  This template creates an Amazon Relational Database Service database instance. You
+  will be billed for the AWS resources used if you create a stack from this template.'
+
+Parameters:
+  EnvironmentName: 
+    Type: String
+    Default: Demo1
+    Description: Name of the environment.
+
+  InstanceType: 
+    Type: String
+    Default: t2.micro
+    Description: Type of instance.
+
+  KeyName: 
+    Type: String
+    Description: EC2 instace key name.
+
+  PublicSubnet:
+    Description: Public Subnet to Attach NAT Gateway.
+    Type: AWS::EC2::Subnet::Id
+
+  ImageId:
+    Description: EC2 instance image id.
+    Type: String
+    Default: 'ami-33e4bc49'
+
+Resources:
+  Ec2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      SubnetId: !Ref PublicSubnet
+      SecurityGroups:
+        - !Ref InstanceSecurityGroup
+      Tags:
+        - Key: Name
+        Value:
+          !Join [ '-', [!Ref EnvironmentName, Ec2Instance] ]
+
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSN and HTTP
+      SecurityGroupIngress: 
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+        Value:
+          !Join [ '-', [!Ref EnvironmentName, InstanceSecurityGroup] ]
+
+          
+  
+
+
+
+    
+    
+      
+        

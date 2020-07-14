@@ -1,0 +1,15 @@
+
+server:
+  port: 9092
+  
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:md1d36lksuch7dl.c7rppluhawbc.eu-west-1.rds.amazonaws.com}:${MYSQL_PORT:3306}/${MYSQL_DB:ecsdemo}?useSSL=false
+    username: ${MYSQL_USERNAME:ecsdemo}
+    password: ${MYSQL_PASSWORD:ecsdemo123}
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
