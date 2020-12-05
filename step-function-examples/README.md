@@ -12,11 +12,11 @@ Currently the Step Function is invoked manually via AWS Console but can be invok
 
 The AWS Step Function uses "Parallel" state to invoke functions "apply-bank-va-function" and "apply-statement-va-function" parallely.
 
+Each branch is self-contained. A state in one branch of a Parallel state must not have a Next field that targets a field outside of that branch, nor can any other state outside the branch transition into that branch.
+
 Here is how the visual workflow looks.
 
 ![Workflow](VariableAggregationStepFunction.png)
-
-Each branch is self-contained. A state in one branch of a Parallel state must not have a Next field that targets a field outside of that branch, nor can any other state outside the branch transition into that branch.
 
 #### Parallel State Input and Output Processing
 A Parallel state provides each branch with a copy of its own input data.
