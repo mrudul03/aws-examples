@@ -1,7 +1,0 @@
-com/stepfunction/invoker/model/StepFunctionRequest.class
-com/stepfunction/invoker/StepFunctionHandler.class
-com/stepfunction/invoker/model/StepFunctionResponse.class
-com/stepfunction/invoker/gateway/BankDataRequest.class
-com/stepfunction/invoker/gateway/BankData.class
-com/stepfunction/invoker/gateway/StmtData.class
-com/stepfunction/invoker/gateway/ParsedData.class

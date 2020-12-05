@@ -1,6 +1,0 @@
-/Users/Mrudul/Documents/workspace-github/aws-examples/step-function-examples/save-aggregateddata-function/src/main/java/com/save/data/handler/SaveAggregatedDataHandler.java
-/Users/Mrudul/Documents/workspace-github/aws-examples/step-function-examples/save-aggregateddata-function/src/main/java/com/save/data/model/AggregatedData.java
-/Users/Mrudul/Documents/workspace-github/aws-examples/step-function-examples/save-aggregateddata-function/src/main/java/com/save/data/model/AggregatedDataResponse.java
-/Users/Mrudul/Documents/workspace-github/aws-examples/step-function-examples/save-aggregateddata-function/src/main/java/com/save/data/model/AggregatedDataRequest.java
-/Users/Mrudul/Documents/workspace-github/aws-examples/step-function-examples/save-aggregateddata-function/src/main/java/com/save/data/model/BankAggregate.java
-/Users/Mrudul/Documents/workspace-github/aws-examples/step-function-examples/save-aggregateddata-function/src/main/java/com/save/data/model/StmtAggregate.java

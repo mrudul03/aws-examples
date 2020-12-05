@@ -1,6 +1,0 @@
-com/smsdata/handler/model/StmtData.class
-com/smsdata/handler/model/SmsParsedDataRequest.class
-com/smsdata/handler/SmsParsedDataHandler.class
-com/smsdata/handler/model/SmsParsedDataResponse.class
-com/smsdata/handler/model/BankData.class
-com/smsdata/handler/model/SmsParsedData.class
