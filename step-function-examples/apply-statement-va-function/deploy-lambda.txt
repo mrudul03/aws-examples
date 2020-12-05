@@ -1,6 +1,4 @@
 
-
-vim ~/.aws/credentials
 aws --profile cnatives lambda list-functions
 
 Create S3 Bucket
