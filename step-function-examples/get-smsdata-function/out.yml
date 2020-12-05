@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: An AWS Lambda application that calls the Lambda API.
+Resources:
+  function:
+    Properties:
+      CodeUri: s3://stepfunction-lambda-functions/59f5b9251e3353d4cbef3c83dbd62bde
+      Description: Java function
+      Handler: com.smsdata.handler.SmsParsedDataHandler
+      MemorySize: 512
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AWSLambdaReadOnlyAccess
+      - AWSXrayWriteOnlyAccess
+      - AWSLambdaVPCAccessExecutionRole
+      Runtime: java8
+      Timeout: 10
+      Tracing: Active
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31

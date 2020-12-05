@@ -1,0 +1,4 @@
+com/bakdata/aggregate/model/BankData.class
+com/bakdata/aggregate/handler/BankDataAggregationHandler.class
+com/bakdata/aggregate/model/BankDataResponse.class
+com/bakdata/aggregate/model/BankDataRequest.class

@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Step Function Invoker.
+Resources:
+  function:
+    Properties:
+      CodeUri: s3://stepfunction-lambda-functions/0a1d33b71139bb28dc504163851a3e47
+      Description: Java function
+      Handler: com.stepfunction.invoker.StepFunctionHandler
+      MemorySize: 512
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AWSLambdaReadOnlyAccess
+      - AWSXrayWriteOnlyAccess
+      - AWSLambdaVPCAccessExecutionRole
+      - AWSStepFunctionsFullAccess
+      Runtime: java8
+      Timeout: 10
+      Tracing: Active
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31

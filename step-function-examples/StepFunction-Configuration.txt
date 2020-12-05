@@ -1,0 +1,68 @@
+
+{
+	"Comment": "Apply aggregate variable",
+  	"StartAt": "RetrieveParsedSmsData",
+  	"States": {
+  		"RetrieveParsedSmsData": {
+  			"Type": "Task",
+  			"ResultPath": "$.RetrieveParsedSmsData.Output",
+  			"Resource": "arn:aws:lambda:ap-south-1:376368920129:function:get-smsdata-function-1RGI4LZ5KXYUI",
+  			"Next": "AggregateParallel"
+  		},
+    	"AggregateParallel": {
+      		"Type": "Parallel",
+      		"ResultPath": "$.CombinedOutput",
+      		"InputPath": "$.RetrieveParsedSmsData.Output",
+      		"OutputPath": "$",
+      		"Next": "CollateResults",
+      		"ResultSelector": {
+      			"BankAggregateResult.$": "$[0].ApplyBankAggregate",
+      			"StmtAggregateResult.$": "$[1].ApplyStmtsAggregate"
+      		},
+      		"Branches": [
+        	{
+	      		"StartAt": "ApplyBankAggregate",
+	      		"States": {
+	        		"ApplyBankAggregate": {
+	          			"Type": "Task",
+	          			"ResultPath": "$.ApplyBankAggregate.Output",
+	          			"Resource": "arn:aws:lambda:ap-south-1:376368920129:function:apply-bank-va-fn-function-1BJEA0EMNHF6R",
+	          			"Parameters": {
+	        				"BankDetails": {
+	            				"banksData.$": "$.parsedData.banksData"
+	        				}
+	    	  			},
+	          			"End": true
+	        		}
+	      		}
+        	},
+        	{
+          		"StartAt": "ApplyStmtsAggregate",
+          		"States": {
+            		"ApplyStmtsAggregate": {
+              			"Type": "Task",
+              			"ResultPath": "$.ApplyStmtsAggregate.Output",
+              			"Resource": "arn:aws:lambda:ap-south-1:376368920129:function:apply-stmt-va-fn-function-9IJALZ76TI18",
+              			"Parameters": {
+            				"StmtDetails": {
+                				"stmtsData.$": "$.parsedData.stmtsData"
+            				}
+            			},
+              			"End": true
+            		}
+          		}
+        	}
+      		]
+    	},
+    	"CollateResults": {
+			"Type": "Task",
+        	"Resource": "arn:aws:lambda:ap-south-1:376368920129:function:saveagg-data-stack-function-1IJ3HTV2C2TU5",
+        	"Parameters": {
+          		"BankAggregate.$": "$.CombinedOutput.BankAggregateResult.Output",
+          		"StmtAggregate.$": "$.CombinedOutput.StmtAggregateResult.Output"
+        	},
+        	"ResultPath": "$.CollateResults.Output",
+        	"End": true
+    	}
+  	}
+}

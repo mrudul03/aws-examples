@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: An AWS Lambda application that calls the Lambda API.
+Resources:
+  function:
+    Properties:
+      CodeUri: s3://stepfunction-lambda-functions/635763cbb153323890bee86550e35c80
+      Description: Java function
+      Handler: com.stmt.aggregate.handler.StmtAggregateHandler
+      MemorySize: 512
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AWSLambdaReadOnlyAccess
+      - AWSXrayWriteOnlyAccess
+      - AWSLambdaVPCAccessExecutionRole
+      Runtime: java8
+      Timeout: 10
+      Tracing: Active
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31

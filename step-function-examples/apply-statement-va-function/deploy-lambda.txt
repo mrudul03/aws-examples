@@ -1,0 +1,30 @@
+
+
+vim ~/.aws/credentials
+aws --profile cnatives lambda list-functions
+
+Create S3 Bucket
+aws --profile cnatives s3 mb s3://stepfunction-lambda-functions
+
+Deploy via AWS CLI
+
+aws cloudformation package --template-file $TEMPLATE --s3-bucket $ARTIFACT_BUCKET --output-template-file out.yml
+
+aws --profile cnatives cloudformation package --template-file template.yaml --s3-bucket stepfunction-lambda-functions --output-template-file out.yml
+aws --profile cnatives cloudformation deploy --template-file out.yml --stack-name apply-stmt-va-fn --capabilities CAPABILITY_NAMED_IAM
+
+{
+	"stmtsData": [
+		{
+			"statementId":"123123",
+			"paymentDate":"12/12/2020",
+			"amount": 12.30
+		},
+		{
+			"statementId":"123133",
+			"paymentDate":"12/12/2020",
+			"amount": 123.30
+		}
+	]
+
+}

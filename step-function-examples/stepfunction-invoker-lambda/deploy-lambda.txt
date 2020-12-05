@@ -1,0 +1,159 @@
+
+
+vim ~/.aws/credentials
+aws --profile cnatives lambda list-functions
+
+Create S3 Bucket
+aws --profile cnatives s3 mb s3://stepfunction-lambda-functions
+
+Deploy via AWS CLI
+
+aws --profile cnatives cloudformation package --template-file template.yaml --s3-bucket stepfunction-lambda-functions --output-template-file out.yml
+aws --profile cnatives cloudformation deploy --template-file out.yml --stack-name invokestep-stack --capabilities CAPABILITY_NAMED_IAM
+
+{
+	"name": "TestStep",
+	"result": "Success"
+}
+
+https://blog.shikisoft.com/orchestrating-aws-lambda-with-step-functions/
+
+{
+	"parsedData": {
+		"banksData": [{
+				"bankName": "SBI",
+				"transactionType": "Credit",
+				"amount": 123.0
+			},
+			{
+				"bankName": "ICICI",
+				"transactionType": "Debit",
+				"amount": 123.0
+			}
+		],
+		"stmtsData": [{
+				"statementId": "Stmt1",
+				"paymentDate": "01012020",
+				"amount": 1212.0
+			},
+			{
+				"statementId": "Stmt2",
+				"paymentDate": "01022020",
+				"amount": 200.0
+			}
+		]
+	}
+}
+
+
+{
+	"Comment": "Apply aggregate variable",
+  	"StartAt": "AggregateParallel",
+  	"States": {
+    	"AggregateParallel": {
+      		"Type": "Parallel",
+      		"ResultPath": "$.CombinedOutput",
+      		"InputPath": "$",
+      		"OutputPath": "$",
+      		"ResultSelector": {
+      			"BankAggregateResult.$": "$[0].ApplyBankAggregate",
+      			"StmtAggregateResult.$": "$[1].ApplyStmtsAggregate"
+      		},
+      		"End": true,
+      		"Branches": [
+        	{
+	      		"StartAt": "ApplyBankAggregate",
+	      		"States": {
+	        		"ApplyBankAggregate": {
+	          			"Type": "Task",
+	          			"ResultPath": "$.ApplyBankAggregate.Output",
+	          			"Resource": "arn:aws:lambda:ap-south-1:376368920129:function:bankdatavariable-aggregate-stack-function-TYI3A5SBGODT",
+	          			"Parameters": {
+	        				"BankDetails": {
+	            				"banksData.$": "$.parsedData.banksData"
+	        				}
+	    	  			},
+	          			"End": true
+	        		}
+	      		}
+        	},
+        	{
+          		"StartAt": "ApplyStmtsAggregate",
+          		"States": {
+            		"ApplyStmtsAggregate": {
+              			"Type": "Task",
+              			"ResultPath": "$.ApplyStmtsAggregate.Output",
+              			"Resource": "arn:aws:lambda:ap-south-1:376368920129:function:stmtvariable-aggregate-stack-function-9XCSD0EFQJZT",
+              			"Parameters": {
+            				"StmtDetails": {
+                				"stmtsData.$": "$.parsedData.stmtsData"
+            				}
+            			},
+              			"End": true
+            		}
+          		}
+        	}
+      		]
+    	}
+  	}
+}
+
+{
+	"Comment": "Apply aggregate variable",
+  	"StartAt": "AggregateParallel",
+  	"States": {
+    	"AggregateParallel": {
+      		"Type": "Parallel",
+      		"ResultPath": "$.CombinedOutput",
+      		"InputPath": "$",
+      		"OutputPath": "$",
+      		"Next": "CollateResults",
+      		"ResultSelector": {
+      			"BankAggregateResult.$": "$[0].ApplyBankAggregate",
+      			"StmtAggregateResult.$": "$[1].ApplyStmtsAggregate"
+      		},
+      		"Branches": [
+        	{
+	      		"StartAt": "ApplyBankAggregate",
+	      		"States": {
+	        		"ApplyBankAggregate": {
+	          			"Type": "Task",
+	          			"ResultPath": "$.ApplyBankAggregate.Output",
+	          			"Resource": "arn:aws:lambda:ap-south-1:376368920129:function:bankdatavariable-aggregate-stack-function-TYI3A5SBGODT",
+	          			"Parameters": {
+	        				"BankDetails": {
+	            				"banksData.$": "$.parsedData.banksData"
+	        				}
+	    	  			},
+	          			"End": true
+	        		}
+	      		}
+        	},
+        	{
+          		"StartAt": "ApplyStmtsAggregate",
+          		"States": {
+            		"ApplyStmtsAggregate": {
+              			"Type": "Task",
+              			"ResultPath": "$.ApplyStmtsAggregate.Output",
+              			"Resource": "arn:aws:lambda:ap-south-1:376368920129:function:stmtvariable-aggregate-stack-function-9XCSD0EFQJZT",
+              			"Parameters": {
+            				"StmtDetails": {
+                				"stmtsData.$": "$.parsedData.stmtsData"
+            				}
+            			},
+              			"End": true
+            		}
+          		}
+        	}
+      		]
+    	},
+    	"CollateResults": {
+    		"Type": "Pass",
+    		"Parameters": {
+    			"BankAggregate.$": "$.CombinedOutput.BankAggregateResult",
+    			"StmtAggregate.$": "$.CombinedOutput.StmtAggregateResult"
+    		},
+    		"End": true
+    	}
+  	}
+}

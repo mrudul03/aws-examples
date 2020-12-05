@@ -1,0 +1,4 @@
+com/stmt/aggregate/handler/StmtAggregateHandler.class
+com/stmt/aggregate/model/StmtDataRequest.class
+com/stmt/aggregate/model/StmtDataResponse.class
+com/stmt/aggregate/model/StmtData.class

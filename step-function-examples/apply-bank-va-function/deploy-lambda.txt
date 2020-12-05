@@ -1,0 +1,46 @@
+
+
+vim ~/.aws/credentials
+aws --profile cnatives lambda list-functions
+
+Create S3 Bucket
+aws --profile cnatives s3 mb s3://stepfunction-lambda-functions
+
+Deploy via AWS CLI
+
+aws --profile cnatives cloudformation package --template-file template.yaml --s3-bucket stepfunction-lambda-functions --output-template-file out.yml
+aws --profile cnatives cloudformation deploy --template-file out.yml --stack-name apply-bank-va-fn --capabilities CAPABILITY_NAMED_IAM
+
+{
+	"banksData": [
+		{
+			"bankName":"SBI",
+			"transactionType":"Credit",
+			"amount": 12.30
+		},
+		{
+			"bankName":"ICICI",
+			"transactionType":"Debit",
+			"amount": 123.30
+		}
+	]
+}
+
+{
+	"parsedData": {
+		"stmtData": [
+		],
+		"banksData": [
+			{
+				"bankName":"SBI",
+				"transactionType":"Credit",
+				"amount": 12.30
+			},
+			{
+				"bankName":"ICICI",
+				"transactionType":"Debit",
+				"amount": 123.30
+			}
+		]
+	}
+}

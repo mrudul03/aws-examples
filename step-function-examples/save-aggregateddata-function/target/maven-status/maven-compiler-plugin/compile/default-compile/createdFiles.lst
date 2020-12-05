@@ -1,0 +1,6 @@
+com/save/data/model/AggregatedData.class
+com/save/data/handler/SaveAggregatedDataHandler.class
+com/save/data/model/AggregatedDataResponse.class
+com/save/data/model/StmtAggregate.class
+com/save/data/model/AggregatedDataRequest.class
+com/save/data/model/BankAggregate.class
