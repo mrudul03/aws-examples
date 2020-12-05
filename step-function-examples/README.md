@@ -2,7 +2,7 @@
 
 ### Example running parallel tasks
 
-The AWS Step function has four states and invokes four invokes below Lambdas
+The AWS Step function has four states and invokes four states and its corresponding Lambdas.
 * State "RetrieveParsedSmsData" invokes Lambda "get-smsdata-function" that prepares data for the next tasks
 * State "ApplyBankAggregate" invokes Lambda "apply-bank-va-function" to apply variable aggregation on the data.
 * State "ApplyStmtsAggregate" invokes Lambda "apply-statement-va-function" to apply variable aggregation on the data
