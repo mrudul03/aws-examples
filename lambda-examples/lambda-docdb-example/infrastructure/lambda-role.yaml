@@ -1,0 +1,83 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This stack creates a role for lambda functions. 
+Parameters: 
+  EnvironmentName: 
+    Type: String
+    Default: Dev
+    Description: Name of the environment.
+
+Resources:
+  LambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: Lambda-Role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+
+  CfBucketPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: S3Policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action: ["s3:*"]
+            Effect: "Allow"
+            Resource: "*"
+      Roles:
+        - !Ref LambdaRole
+
+  CloudWatchPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: CloudWatchPolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action: [
+              "logs:CreateLogGroup",
+              "logs:CreateLogStream",
+              "logs:PutLogEvents"
+            ]
+            Effect: "Allow"
+            Resource: "*"
+      Roles:
+        - !Ref LambdaRole
+
+  VpcPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: VpcPolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action: [
+              "ec2:CreateNetworkInterface",
+              "ec2:DescribeNetworkInterfaces",
+              "ec2:DeleteNetworkInterface",
+              "ec2:AssignPrivateIpAddresses",
+              "ec2:UnassignPrivateIpAddresses"
+            ]
+            Effect: "Allow"
+            Resource: "*"
+      Roles:
+        - !Ref LambdaRole
+
+
+
+Outputs:
+  LambdaRoleId:
+    Description: The ID of Lambda role
+    Value: !Ref 'LambdaRole'
+    Export:
+      Name: !Join [ ':', [ !Ref EnvironmentName, 'LambdaRoleId' ] ]
+
+
+               

@@ -1,0 +1,14 @@
+
+aws --profile cnatives lambda list-functions
+
+Create S3 Bucket
+aws --profile cnatives s3 mb s3://stepfunction-lambda-functions
+
+Deploy via AWS CLI
+
+aws cloudformation package --template-file lambda-role.yaml --s3-bucket stepfunction-lambda-functions --output-template-file lambda-role-out.yaml
+aws cloudformation deploy --template-file lambda-role-out.yaml --stack-name lambda-role --capabilities CAPABILITY_NAMED_IAM
+
+
+aws cloudformation package --template-file template.yaml --s3-bucket stepfunction-lambda-functions --output-template-file out.yaml
+aws cloudformation deploy --template-file out.yaml --stack-name s3-example --capabilities CAPABILITY_NAMED_IAM

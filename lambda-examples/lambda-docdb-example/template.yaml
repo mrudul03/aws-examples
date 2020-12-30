@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Lambda application.
+Resources:
+  function:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: target/lambda-docdb-example-1.0-SNAPSHOT.jar
+      Handler: com.lambda.handler.LambdaHandler
+      Runtime: java8
+      Description: Java function
+      MemorySize: 512
+      Timeout: 300
+      # Function's execution role
+      Role: arn:aws:iam::<aws-account-number>:role/Lambda-Role
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-03b8d3fc39578c685
+        SubnetIds:
+          - subnet-0175bd90cbf2c3496
+          - subnet-0b5690aa2530f483f
